@@ -18,6 +18,7 @@ class FillInGaps:
 		self.voc = {}
 		self.load_voc(voc_file)
 		self.is_valid = False
+		self.n_gaps = 3
 
 	def load_voc(self, file):
 		voc_reader = csv.reader(open(file, "r"), delimiter="\t")
@@ -59,7 +60,7 @@ class FillInGaps:
 		gaps = 0
 		gaps_pos = []
 		gaps_words = []
-		while gaps < 3 and tries < 100:
+		while gaps < self.n_gaps and tries < 100:
 			tries += 1
 			id_word = random.randint(0, len(words)-1)
 			if id_word not in gaps_pos:

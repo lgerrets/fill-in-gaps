@@ -20,6 +20,9 @@ class GUI:
 			[sg.Text("", size=(80, 1), key="-GAPS-"),],
 			[sg.Button("Show", key="-SHOW-", disabled=True),],
 			[sg.Button("Next", key="-NEXT-", disabled=True),],
+			[sg.Text("Max number of gaps.", size=(80, 1)),],
+			[sg.InputText("3", size=(6, 1), key="-NGAPS-", enable_events=True),],
+			[sg.Text("Please put a integer", size=(80, 1), key="-NGAPS WARNING-", text_color="red", visible=False),],
 			[sg.Text("Threshold on word frequencies to ignore (eg. 'abalone'=0.07 and 'est'=15085). Put -1 to ignore all words from the dictionnary.", size=(80, 2)),],
 			[sg.InputText("10", size=(6, 1), key="-THRESHOLD-", enable_events=True),],
 			[sg.Text("Please put a number (eg. 1387.4, 0.05, -1, etc...)", size=(80, 1), key="-THRESHOLD WARNING-", text_color="red", visible=False),],
@@ -29,6 +32,7 @@ class GUI:
 		]
 		self.window = sg.Window("Fill in gaps", layout)
 		self.threshold_valid = True
+		self.ngaps_valid = True
 		self.filein_valid = False
 
 	def run(self):
@@ -38,6 +42,7 @@ class GUI:
 			event, values = self.window.read(event_timeout)
 			if do_init:
 				self.trigger_threshold_event(values)
+				self.trigger_ngaps_event(values)
 				do_init = False
 				event_timeout = None
 
@@ -69,6 +74,8 @@ class GUI:
 
 			elif event == "-THRESHOLD-":
 				self.trigger_threshold_event(values)
+			elif event == "-NGAPS-":
+				self.trigger_ngaps_event(values)
 
 	def trigger_threshold_event(self, values):
 		try:
@@ -79,6 +86,16 @@ class GUI:
 			self.threshold_valid = True
 			self.fig.freq_max = threshold
 		self.window["-THRESHOLD WARNING-"].update(visible=not self.threshold_valid)
+
+	def trigger_ngaps_event(self, values):
+		try:
+			ngaps = int(values["-NGAPS-"])
+		except ValueError:
+			self.ngaps_valid = False
+		else:
+			self.ngaps_valid = True
+			self.fig.n_gaps = ngaps
+		self.window["-NGAPS WARNING-"].update(visible=not self.ngaps_valid)
 
 def main():
 	gui = GUI()
